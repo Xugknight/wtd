@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Write That Down</title>
+    <link rel="icon" href="./images/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css" />
+</head>
+
+<body>
+    <header class="appbar">
+        <h1 class="brand">Write That Down</h1>
+        <div class="toolbar" role="toolbar" aria-label="Scratchpad controls">
+            <div class="left">
+                <button class="btn primary" id="saveLocal">Save</button>
+                <button class="btn" id="downloadTxt" title="Ctrl+S">.txt</button>
+                <button class="btn" id="downloadHtml" title="Ctrl+Shift+S">.html</button>
+                <input class="hidden" type="file" id="fileInput"
+                    accept=".txt,.md,.html,.htm,.log,.json,.csv,.xml,.yml,.yaml" />
+                <button class="btn" id="loadFile">Open…</button>
+                <button class="btn ghost" id="print">Print</button>
+                <button class="btn danger" id="clear">Clear</button>
+            </div>
+            <div class="spacer"></div>
+            <div class="right">
+                <label class="switch"><input type="checkbox" id="monoToggle" checked>Monospace</label>
+                <label class="switch"><input type="checkbox" id="wrapToggle" checked>Wrap</label>
+                <label class="switch"><input type="checkbox" id="pastePlainToggle" checked>Paste as text</label>
+                <label class="switch"><input type="checkbox" id="themeToggle">Light</label>
+                <label class="switch"><input type="checkbox" id="mdToggle">MD Preview</label>
+                <span id="status" aria-live="polite">Idle</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout">
+        <main class="workspace">
+            <nav class="tabs" id="tabs">
+                <button class="tab add" id="addTab" title="New pad">＋</button>
+            </nav>
+
+            <div class="editorRow">
+                <div id="pad" class="is-mono" contenteditable spellcheck="false"
+                    data-placeholder="Type or paste here… (autosaves)"></div>
+                <div id="mdPreview" class="preview hidden" aria-label="Markdown preview"></div>
+            </div>
+        </main>
+
+        <aside class="sidebar" id="help">
+            <h2>Tips</h2>
+            <ul>
+                <li><strong>Save</strong> stores to your browser (autosaves as you type).</li>
+                <li><strong>.txt</strong> (<span class="kbd">Ctrl</span>+<span class="kbd">S</span>) downloads plain
+                    text.</li>
+                <li><strong>.html</strong> (<span class="kbd">Ctrl</span>+<span class="kbd">Shift</span>+<span
+                        class="kbd">S</span>) exports with formatting.</li>
+                <li><strong>Open…</strong> loads a local .txt/.md/.html.</li>
+                <li><strong>Paste as text</strong> strips formatting; toggle off to keep rich paste.</li>
+                <li><strong>Monospace</strong> uses a code font that aligns characters—great for code or tables.</li>
+                <li><strong>Wrap</strong> keeps long lines visible without horizontal scrolling. Turn off for exact
+                    formatting.</li>
+                <li><strong>MD Preview</strong> shows a live Markdown view of the pad’s content.</li>
+                <li><strong>Tabs</strong>: Click names to switch, <em>Ctrl/Cmd-Click</em> to rename,
+                    <em>Right-click</em> to delete, <em>＋</em> to add.</li>
+            </ul>
+
+            <div class="slider">
+                <label>Notebook lines intensity
+                    <input type="range" id="linesIntensity" min="0" max="100" value="70">
+                </label>
+            </div>
+        </aside>
+    </div>
+    </main>
+    </div>
+
+    <script src="./js/main.js"></script>
+</body>
+
+</html>
