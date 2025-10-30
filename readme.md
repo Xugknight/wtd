@@ -1,67 +1,84 @@
-# Write That Down
+# 📝 Write That Down
 
-A simple, offline‑friendly scratchpad inspired by `data:text/html,<html contenteditable>`, with quality‑of‑life features for quick note taking, code snippets, and Markdown viewing.
+A fast, offline-friendly scratchpad inspired by  
+`data:text/html,<html contenteditable>`, rebuilt as a stylish notepad
 
-> Status: **MVP in progress** — core features scaffolded, polishing and fixes next.
-
----
-
-## ✨ Features (intended)
-
-- **Contenteditable editor** with autosave to `localStorage` (per‑tab pads)
-- **Multiple pads** via tabs (add/rename/delete)
-- **Download** as `.txt` or self‑contained `.html`
-- **Open** local files (`.txt`, `.md`, `.html`) into the editor
-- **Paste as plain text** toggle to strip formatting
-- **Monospace** + **Wrap** toggles
-- **Light/Dark themes**
-- **Notebook line intensity** slider (controls decorative background)
-- **Markdown Preview** panel (live, minimal parser)
-- **Service worker** for offline app‑shell caching
+> **Status:** MVP complete — all core features working and polished.  
+> Next: overflow tabs, export/import, markdown upgrades.
 
 ---
 
-## 🧰 Tech & Architecture
+## ✨ Features
 
-- **Static** HTML/CSS/JS — no build step required
-- **LocalStorage** for pads + UI state
-- **Service Worker** (`sw.js`) caches `index.html`, CSS/JS, favicon; network fallback for other requests
-- **Zero dependencies** (no MD library; very small inline parser)
+- 🧠 **Autosaving editor** — type freely; your notes persist in `localStorage`
+- 🗂 **Multiple pads** — add, rename, delete, or switch tabs effortlessly
+- 💾 **Download** notes as `.txt` or `.html`
+- 📂 **Open** existing `.txt`, `.md`, or `.html` files into the pad
+- 🔤 **Paste-as-text** toggle to strip formatting (great for copying from web)
+- 🔠 **Monospace + Wrap** toggles for dev-style editing
+- 📏 **Notebook line intensity** slider — customize your page background
+- 🧩 **Markdown Preview** panel (live, minimal parser)
+- ⚙️ **Service worker** — runs entirely offline once loaded
+- 🌞 **Light mode** 
+- 🌚 **Dark mode**
+
+---
+
+## 🖥 Tech Stack
+
+- **Static HTML/CSS/JS**
+- **LocalStorage** for pads and UI state
+- **Service Worker** (`sw.js`) caches app shell for offline use
+- **Zero dependencies**
 
 ---
 
 ## ⌨️ Keyboard Shortcuts
 
-- **Ctrl/Cmd + S** → download `.txt`
-- **Ctrl/Cmd + Shift + S** → download `.html`
-- **Ctrl/Cmd + N** → new pad
-- **Ctrl/Cmd + B** → toggle Markdown Preview
+| Action | Shortcut |
+|---------|-----------|
+| Save as `.txt` | **Ctrl/Cmd + S** |
+| Save as `.html` | **Ctrl/Cmd + Shift + S** |
+| New pad | **Ctrl/Cmd + N** |
+| Toggle Markdown preview | **Ctrl/Cmd + B** |
 
-**Tabs:**
-- Click tab name → switch pads
-- **Ctrl/Cmd + Click** tab → rename
-- **Right‑click** tab → delete
-- **＋** button → add pad
-- Overflow menu (when many pads) shows extra pads
-
----
-
-## 📝 Markdown Preview (how to use)
-
-- Toggle **MD Preview** in the toolbar.
-- The preview renders from the editor’s **plain text** content (not HTML).
-- Supported basics: headings (`#`, `##`, `###`), bold (`**bold**`), italic (`*italic*`), inline code (\`code\`), fenced code (\`\`\` block \`\`\`), bullet lists (`- item`), links (`[text](https://...)`).  
-- Not supported yet: numbered lists, blockquotes, tables (coming soon).
+### Tabs
+- Click tab → switch pad  
+- **Ctrl/Cmd + Click** → rename  
+- **Right-click** → delete  
+- **＋** → add new pad  
+- Overflow menu (coming soon) shows hidden pads when many are open
 
 ---
 
-## 🔭 Roadmap
+## 🧾 Markdown Tips
 
-- **Fixes first**: tab creation, light theme toggle, intensity slider, Markdown initialization
-- **Design**: stylized **dark (slate + amber)** palette
-- **Overflow tab menu** with actions (rename, delete) inside
-- **Export/Import all pads** (JSON backup/restore)
-- **Markdown**: numbered lists, blockquotes, tables, code highlighting (no external runtime libs)
-- **Theming**: palette switcher (Dark variants), custom accent color
-- **Sync**: optional storage sync via file export/import (no backend)
-- **Accessibility**: improved focus rings, better contrast checks, aria‑labels
+- Toggle **MD Preview** to view formatted content side-by-side  
+- Supported: headings, bold/italic, inline/fenced code, unordered lists, links  
+- Coming soon: ordered lists, blockquotes, tables  
+- 🧠 *Tip:* if MD Preview is **on**, turn **off “Paste as text”** to preserve Markdown characters
+
+---
+
+## 🔭 Roadmap / To-Do
+
+### 🎯 Core Enhancements
+- [ ] Overflow tab menu (rename/delete from dropdown)  
+- [ ] Export / Import all pads as `.json` (backup + restore)  
+- [ ] Download-all option (`.zip` of pads)  
+- [ ] Ordered lists, blockquotes, and tables in Markdown  
+- [ ] Optional code syntax highlighting (no runtime libs)  
+
+### 🎨 Visual / UX
+- [ ] Add hover/focus rings for accessibility  
+- [ ] Paper texture toggle for added realism  
+- [ ] More theme presets
+- [ ] Slight animation / transition polish for buttons and tabs  
+
+---
+
+## 📸 Screenshots
+
+| Light Mode | Dark Mode |
+|-------------|------------|
+| ![Light mode screenshot](./images/light.png) | ![Dark mode screenshot](./images/dark.png) |
