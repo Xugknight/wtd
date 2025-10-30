@@ -1,5 +1,7 @@
 # 📝 Write That Down
 
+[![Live](https://img.shields.io/badge/Live-WTD-2ea44f?logo=google-chrome&logoColor=white)](https://xugknight.github.io/wtd/)
+
 A fast, offline-friendly scratchpad inspired by  
 `data:text/html,<html contenteditable>`, rebuilt as a stylish notepad
 
