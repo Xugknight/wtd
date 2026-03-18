@@ -88,7 +88,22 @@
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = String(e.target.result);
-      if(/<\w+[^>]*>/.test(text)) pad.innerHTML = text; else pad.textContent = text;
+      const ext = (file.name.split('.').pop() || '').toLowerCase();
+      const looksHtml =
+        ['html','htm'].includes(ext) ||
+        /<html[\s>]/i.test(text) ||
+        /<body[\s>]/i.test(text);
+      if(looksHtml){
+        // Parse + sanitize before inserting into the editor.
+        // This prevents script/event-handler injection when importing HTML.
+        try{
+          pad.innerHTML = sanitizeImportedHtml(text);
+        }catch{
+          pad.textContent = text;
+        }
+      } else {
+        pad.textContent = text;
+      }
       autosave();
     };
     reader.readAsText(file);
@@ -145,7 +160,7 @@
     } else {
       renderTabs();
     }
-  };
+  }
 
   // Shortcuts
   document.addEventListener('keydown', (e) => {
@@ -261,10 +276,57 @@
     mdPreview.innerHTML = mdToHtml(src);
   }
 
+  function sanitizeImportedHtml(html){
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const body = doc.body;
+    if(!body) return '';
+
+    // Drop obviously dangerous nodes.
+    body.querySelectorAll('script, style, iframe, object, embed, link, meta').forEach(n => n.remove());
+
+    // Drop dangerous attributes (inline handlers, styles, javascript: URLs).
+    body.querySelectorAll('*').forEach(el => {
+      [...el.attributes].forEach(attr => {
+        const name = attr.name.toLowerCase();
+        const value = attr.value || '';
+        if(name.startsWith('on')) el.removeAttribute(attr.name);
+        else if(name === 'style') el.removeAttribute(attr.name);
+        else if((name === 'href' || name === 'src') && /^\s*javascript:/i.test(value)) el.removeAttribute(attr.name);
+        else if((name === 'href' || name === 'src') && /^\s*data:/i.test(value)) el.removeAttribute(attr.name);
+      });
+    });
+
+    return body.innerHTML;
+  }
+
   function mdToHtml(md){
-    const esc = (s)=> s.replace(/[&<>]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]));
-    md = md.replace(/```([\s\S]*?)```/g, (_, code) => `<pre><code>${esc(code)}</code></pre>`);
-    md = md.replace(/`([^`]+)`/g, (_, code) => `<code>${esc(code)}</code>`);
+    // Escape for HTML text/attribute contexts (we also use this inside href attributes).
+    const esc = (s)=> s.replace(/[&<>"']/g, ch => ({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#39;'
+    }[ch]));
+
+    // Extract code blocks/spans first, then escape all remaining text.
+    // This ensures any raw HTML typed into the editor cannot execute in the preview.
+    const codeBlocks = [];
+    const inlineCodes = [];
+    md = md.replace(/```([\s\S]*?)```/g, (_, code) => {
+      const i = codeBlocks.length;
+      codeBlocks.push(`<pre><code>${esc(code)}</code></pre>`);
+      return `@@CODEBLOCK${i}@@`;
+    });
+    md = md.replace(/`([^`]+)`/g, (_, code) => {
+      const i = inlineCodes.length;
+      inlineCodes.push(`<code>${esc(code)}</code>`);
+      return `@@INLINECODE${i}@@`;
+    });
+
+    // Escape everything else (neutralizes <script>, <img onerror=...>, etc.).
+    md = esc(md);
+
     md = md.replace(/^###\s+(.+)$/gm, '<h3>$1</h3>')
            .replace(/^##\s+(.+)$/gm, '<h2>$1</h2>')
            .replace(/^#\s+(.+)$/gm, '<h1>$1</h1>');
@@ -272,10 +334,18 @@
            .replace(/\*([^*]+)\*/g, '<em>$1</em>');
     md = md.replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
     md = md.replace(/^(?:[-*]\s+.+\n?)+/gm, block => {
-      const items = block.trim().split(/\n/).map(li => li.replace(/^[-*]\s+/, '')).map(t => `<li>${t}</li>`).join('');
+      const items = block.trim()
+        .split(/\n/)
+        .map(li => li.replace(/^[-*]\s+/, ''))
+        .map(t => `<li>${t}</li>`)
+        .join('');
       return `<ul>${items}</ul>`;
     });
-    md = md.replace(/^(?!<h\d|<ul|<pre|\s*$)(.+)$/gm, '<p>$1</p>');
+    md = md.replace(/^(?!<h\d|<ul|<pre|@@CODEBLOCK\d+@@|@@INLINECODE\d+@@|\s*$)(.+)$/gm, '<p>$1</p>');
+
+    // Restore code after paragraphing/structure.
+    md = md.replace(/@@CODEBLOCK(\d+)@@/g, (_, i) => codeBlocks[Number(i)] || '');
+    md = md.replace(/@@INLINECODE(\d+)@@/g, (_, i) => inlineCodes[Number(i)] || '');
     return md;
   }
 
