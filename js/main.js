@@ -130,15 +130,22 @@
     const t = e.target.closest('.tab');
     if (!t || t.classList.contains('add') || t.classList.contains('more')) return;
     e.preventDefault();
-    const id = t.dataset.id;
+    deletePad(t.dataset.id);
+  });
+  
+  function deletePad(id){
     if (pads.length === 1) return alert('Cannot delete the only pad.');
-    if (confirm('Delete this pad?')) {
-      pads = pads.filter(p => p.id !== id);
-      savePads();
-      if (ui.activeId === id) switchTo(pads[0].id);
+    if (!confirm('Delete this pad?')) return;
+
+    pads = pads.filter(p => p.id !== id);
+    savePads();
+
+    if (ui.activeId === id) {
+      switchTo(pads[0].id);
+    } else {
       renderTabs();
     }
-  });
+  };
 
   // Shortcuts
   document.addEventListener('keydown', (e) => {
@@ -190,7 +197,25 @@
       const b = document.createElement('button');
       b.className = 'tab' + (p.id === ui.activeId ? ' active' : '');
       b.dataset.id = p.id;
-      b.textContent = p.name;
+      
+      const label = document.createElement('span');
+      label.className = 'tab-label';
+      label.textContent = p.name;
+
+      const closeBtn = document.createElement('span');
+      closeBtn.className = 'tab-close';
+      closeBtn.textContent = '×';
+      closeBtn.setAttribute('role', 'button');
+      closeBtn.setAttribute('aria-label', `Delete ${p.name}`);
+
+      closeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        deletePad(p.id);
+      });
+
+      b.appendChild(label);
+      b.appendChild(closeBtn);
       tabsEl.insertBefore(b, addTabBtn);
     });
 

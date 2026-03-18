@@ -99,11 +99,39 @@ body{
   margin-left: .5rem;
 }
 .tab{
-  background:var(--muted); color:var(--text); border:1px solid color-mix(in srgb, var(--text), transparent 85%); border-radius:999px;
-  padding:.35rem .7rem; cursor:pointer; font-weight:600;
+  background:var(--muted);
+  color:var(--text);
+  border:1px solid color-mix(in srgb, var(--text), transparent 85%);
+  border-radius:999px;
+  padding:.35rem .7rem;
+  cursor:pointer;
+  font-weight:600;
+  display:inline-flex;
+  align-items:center;
+  gap:.45rem;
 }
 .tab.active{outline:2px solid var(--accent)}
 .tab.add{font-weight:700}
+
+.tab-label{
+  display:inline-block;
+}
+
+.tab-close{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:1.15rem;
+  height:1.15rem;
+  border-radius:999px;
+  flex-shrink:0;
+  line-height:1;
+  cursor:pointer;
+}
+
+.tab-close:hover{
+  opacity:.8;
+}
 
 .editorRow{
   margin-top: .2rem;
